@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, render_template, request, flash, redirect, url_for
 
 from datetime import timedelta
@@ -10,20 +12,18 @@ from page_analyzer.db_connect import get_connection
 
 
 app = Flask(__name__)
-app.secret_key = 'test'
+app.secret_key = os.environ.get('SECRET_KEY')
 app.url_map.strict_slashes = False
 app.permanent_session_lifetime = timedelta(hours=24)
 
-title = "Page Analyzer"
-
 
 @app.route('/')
-def home(url='', status=200):
-    return render_template("home.html", title=title, url=url), status
+def home(url=''):
+    return render_template("home.html", url=url)
 
 
 @app.route("/urls/<int:id>")
-def urls_id(id, status=200):
+def urls_id(id):
     name = ''
     date = ''
     checks = []
@@ -35,23 +35,22 @@ def urls_id(id, status=200):
         if is_checks_exist(conn, id):
             checks = get_checks_by_id(conn, id)
     return render_template(
-        "urls_id.html", title=name, name=name, date=date, id=id, checks=checks), status
+        "urls_id.html", title=name, name=name, date=date, id=id, checks=checks)
 
 
 @app.route("/urls/<int:id>/checks", methods=['POST'])
-def url_check(id):
+def url_check(url_id):
     with get_connection() as conn:
-        if request.method == 'POST':
-            url = get_data_by_id(conn, id)[1]
-            data = get_data(url)
-            if data:
-                add_new_check(conn, (id, *data))
-                flash('Страница успешно проверена', 'success')
-                status = 200
-            else:
-                flash('Произошла ошибка при проверке', 'danger')
-                status = 422
-        return redirect(url_for('urls_id', id=id, status=status))
+        url = get_data_by_id(conn, url_id)[1]
+        data = get_data(url)
+        if data:
+            add_new_check(conn, (url_id, *data))
+            flash('Страница успешно проверена', 'success')
+            status = 200
+        else:
+            flash('Произошла ошибка при проверке', 'danger')
+            status = 422
+    return redirect(url_for('urls_id', id=url_id, status=status))
 
 
 @app.route("/urls", methods=["GET", "POST"])
@@ -79,17 +78,13 @@ def urls():
 
             for error in errors:
                 flash(*messages[error])
-            return render_template("home.html", title=title, url=url), 422
+            return render_template("home.html", url=url), 422
 
-        else:
+        elif request.method == 'GET':
             urls = get_all_urls(conn)
-            return render_template("urls.html", title=title, urls=urls)
+            return render_template("urls.html", urls=urls)
 
 
 @app.errorhandler(404)
 def not_found(error):
     return render_template("404.html")
-
-
-if __name__ == '__main__':
-    app()

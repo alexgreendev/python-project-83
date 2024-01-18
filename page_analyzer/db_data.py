@@ -51,7 +51,11 @@ def is_checks_exist(conn, id):
 def get_checks_by_id(conn, id):
     """Return all checks for selected id"""
     with conn.cursor() as cur:
-        cur.execute("""SELECT id, status_code, h1, title, description, created_at FROM url_checks WHERE url_id=%s ORDER BY id DESC ;""", (id, ))
+        cur.execute("""
+            SELECT id, status_code, h1, title, description, created_at
+            FROM url_checks
+            WHERE url_id=%s ORDER BY id DESC;
+        """, (id, ))
         result = cur.fetchall()
     return result
 
@@ -62,4 +66,7 @@ def add_new_check(conn, data):
     time_ = datetime.now()
     # url_id, status_code, h1, title, description = data
     with conn.cursor() as cur:
-        cur.execute('''INSERT INTO url_checks (url_id, status_code, h1, title, description, created_at) VALUES (%s, %s, %s, %s, %s, %s) ;''', (*data, time_))
+        cur.execute('''
+            INSERT INTO url_checks (url_id, status_code, h1, title, description, created_at)
+            VALUES (%s, %s, %s, %s, %s, %s);
+        ''', (*data, time_))

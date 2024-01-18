@@ -14,6 +14,8 @@ push: check
 install:
 	poetry install
 build:
+	./build.sh
+package-build:
 	poetry build
 publish:
 	poetry publish --dry-run
@@ -31,8 +33,3 @@ start:
 	poetry run gunicorn -w 5 -b 0.0.0.0:$(PORT) page_analyzer:app
 start-server:
 	gunicorn -w 5 -b 0.0.0.0:8000 page_analyzer:app
-
-freeze:
-	poetry export --without-hashes --format=requirements.txt > requirements.txt
-up: freeze
-	docker-compose up
