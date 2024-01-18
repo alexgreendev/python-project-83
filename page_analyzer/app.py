@@ -38,7 +38,7 @@ def urls_id(id):
         "urls_id.html", title=name, name=name, date=date, id=id, checks=checks)
 
 
-@app.route("/urls/<int:id>/checks", methods=['POST'])
+@app.route("/urls/<int:url_id>/checks", methods=['POST'])
 def url_check(url_id):
     with get_connection() as conn:
         url = get_data_by_id(conn, url_id)[1]
