@@ -6,12 +6,21 @@ from contextlib import contextmanager
 
 def create_connection(*args, **kwargs):
     """Create connection for work with PostgresSQL"""
+    keepalive_kwargs = {
+        "keepalives": 1,
+        "keepalives_idle": 30,
+        "keepalives_interval": 5,
+        "keepalives_count": 5,
+    }
+
     return psycopg2.connect(
         host=DB_HOST,
         port=DB_PORT,
         user=DB_USER,
         password=DB_PASS,
-        database=DB_NAME)
+        database=DB_NAME,
+        **keepalive_kwargs,
+    )
 
 
 def create_pool(min_conn=1, max_conn=5):
