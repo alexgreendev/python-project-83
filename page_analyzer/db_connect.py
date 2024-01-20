@@ -23,7 +23,7 @@ def create_connection(*args, **kwargs):
     )
 
 
-def create_pool(min_conn=1, max_conn=5):
+def create_pool(min_conn=1, max_conn=1):
     """Create connection for work with PostgresSQL"""
     return pool.SimpleConnectionPool(minconn=min_conn,
                                      maxconn=max_conn,
