@@ -38,6 +38,10 @@ def create_pool(min_conn=1, max_conn=1):
 @contextmanager
 def get_connection():
     """Get connection from pool or error if connection doesn't work"""
+    global conn_pool
+    if not conn_pool:
+        conn_pool = create_pool()
+
     conn = None
     try:
         conn = conn_pool.getconn()
