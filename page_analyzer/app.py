@@ -35,7 +35,7 @@ def urls_id(url_id):
         if is_checks_exist(conn, url_id):
             checks = get_checks_by_id(conn, url_id)
     return render_template(
-        "urls_id.html", title=name, name=name, date=date, url_id=url_id, checks=checks)
+        "urls_id.html", title=name, name=name, date=date, id=url_id, checks=checks)
 
 
 @app.route("/urls/<int:url_id>/checks", methods=['POST'])
@@ -50,7 +50,7 @@ def url_check(url_id):
         else:
             flash('Произошла ошибка при проверке', 'danger')
             status = 422
-    return redirect(url_for('urls_id', id=url_id, status=status))
+    return redirect(url_for('urls_id', url_id=url_id, status=status))
 
 
 @app.route("/urls", methods=["GET", "POST"])
@@ -67,14 +67,14 @@ def urls():
             errors = is_valid(url)
             if not errors:
                 correct_url = normalize_url(url)
-                id = is_url_exist(conn, correct_url)
+                url_id = is_url_exist(conn, correct_url)
                 if id is not False:
                     flash("Страница уже существует", 'primary')
                 else:
                     add_new_url(conn, correct_url)
                     flash("Страница успешно добавлена", 'success')
                     id = is_url_exist(conn, correct_url)
-                return redirect(url_for('urls_id', url_id=id))
+                return redirect(url_for('urls_id', url_id=url_id))
 
             for error in errors:
                 flash(*messages[error])
