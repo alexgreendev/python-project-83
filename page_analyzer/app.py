@@ -22,20 +22,20 @@ def home(url=''):
     return render_template("home.html", url=url)
 
 
-@app.route("/urls/<int:id>")
-def urls_id(id):
+@app.route("/urls/<int:url_id>")
+def urls_id(url_id):
     name = ''
     date = ''
     checks = []
     with get_connection() as conn:
-        url_data = get_data_by_id(conn, id)
+        url_data = get_data_by_id(conn, url_id)
         if url_data:
             name = url_data[1]
             date = url_data[2]
-        if is_checks_exist(conn, id):
-            checks = get_checks_by_id(conn, id)
+        if is_checks_exist(conn, url_id):
+            checks = get_checks_by_id(conn, url_id)
     return render_template(
-        "urls_id.html", title=name, name=name, date=date, id=id, checks=checks)
+        "urls_id.html", title=name, name=name, date=date, id=url_id, checks=checks)
 
 
 @app.route("/urls/<int:url_id>/checks", methods=['POST'])
