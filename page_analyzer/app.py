@@ -35,7 +35,7 @@ def urls_id(url_id):
         if is_checks_exist(conn, url_id):
             checks = get_checks_by_id(conn, url_id)
     return render_template(
-        "urls_id.html", title=name, name=name, date=date, id=url_id, checks=checks)
+        "urls_id.html", title=name, name=name, date=date, url_id=url_id, checks=checks)
 
 
 @app.route("/urls/<int:url_id>/checks", methods=['POST'])
@@ -74,7 +74,7 @@ def urls():
                     add_new_url(conn, correct_url)
                     flash("Страница успешно добавлена", 'success')
                     id = is_url_exist(conn, correct_url)
-                return redirect(url_for('urls_id', id=id))
+                return redirect(url_for('urls_id', url_id=id))
 
             for error in errors:
                 flash(*messages[error])
