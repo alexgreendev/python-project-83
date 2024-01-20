@@ -49,10 +49,9 @@ def get_connection():
         conn.commit()
     except Exception as error:
         conn.rollback()
-        raise Exception(f'Connection lost. Changes abort. {error}')
+        raise error
     finally:
-        if conn:
-            conn_pool.putconn(conn)
+        conn_pool.putconn(conn)
 
 
 conn_pool = create_pool()
